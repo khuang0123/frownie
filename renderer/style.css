@@ -1,10 +1,7 @@
 :root {
-  --size: 130px; /* keep in sync with SIZE in creature.js */
-  --fur: #ffb8cf;
-  --fur-dark: #f08fb0;
-  --belly: #ffe3ec;
+  --size: 150px; /* keep in sync with SIZE in creature.js */
+  --fur: #ffe493; /* body colour of assets/creature.png, used for the eyelids */
   --ink: #3b2a35;
-  --leaf: #7ccf8a;
 }
 
 html,
@@ -33,12 +30,13 @@ body.web {
   left: 0;
   bottom: 6px;
   width: var(--size);
-  height: var(--size);
+  aspect-ratio: 373 / 360; /* assets/creature.png */
   will-change: transform;
   pointer-events: none;
 }
 
 .sprite {
+  position: relative;
   width: 100%;
   height: 100%;
   transition: transform 0.15s;
@@ -47,130 +45,80 @@ body.web {
   transform: scaleX(-1);
 }
 
-.creature svg * {
-  transform-box: fill-box;
-}
-.shadow {
-  fill: rgba(40, 20, 40, 0.18);
-}
-.blob {
-  fill: var(--fur);
-  stroke: var(--fur-dark);
-  stroke-width: 2.5;
-}
-.belly {
-  fill: var(--belly);
-}
-.leg {
-  fill: var(--fur-dark);
-  transform-origin: 50% 0;
-}
-.arm {
-  fill: none;
-  stroke: var(--fur-dark);
-  stroke-width: 7;
-  stroke-linecap: round;
-}
-.arm-back {
-  transform-origin: 100% 100%;
-}
-.arm-front {
-  transform-origin: 0% 100%;
-}
-.eye {
-  fill: #fff;
-}
-.pupil {
-  fill: var(--ink);
-}
-.glint {
-  fill: #fff;
-}
-.eyes {
-  transform-origin: 50% 50%;
-  animation: blink 4.5s infinite;
-}
-.cheek {
-  fill: #ff7fa6;
-  opacity: 0.55;
-}
-.mouth {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2.2;
-  stroke-linecap: round;
-}
-.stem {
-  fill: none;
-  stroke: var(--leaf);
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-.leaf {
-  fill: var(--leaf);
-}
-.sprout {
-  transform-origin: 0% 100%;
-  animation: sway 2.6s ease-in-out infinite alternate;
-}
 .body {
+  position: relative;
+  width: 100%;
+  height: 100%;
   transform-origin: 50% 100%;
 }
+.body img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 3px rgba(60, 40, 0, 0.18));
+}
 
-/* walking */
-.walking .leg-front {
-  animation: step 0.36s ease-in-out infinite alternate;
+.shadow {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: -4px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(40, 30, 10, 0.16);
 }
-.walking .leg-back {
-  animation: step 0.36s ease-in-out infinite alternate-reverse;
+
+.eyelid {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--fur);
+  border-bottom: 2px solid #f2b705; /* the closed-eye line */
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  animation: blink 4.5s infinite;
 }
+
+/* walking: a little waddle with a bob on every step */
 .walking .body {
-  animation: bob 0.18s ease-in-out infinite alternate;
+  animation: waddle 0.44s ease-in-out infinite alternate;
+}
+.walking .shadow {
+  animation: shadow-step 0.22s ease-in-out infinite alternate;
 }
 
 /* standing with you */
 .present:not(.cheer) .body {
-  animation: breathe 2.2s ease-in-out infinite;
-}
-.present:not(.cheer) .arm-front {
-  animation: wave 0.5s ease-in-out 4 alternate;
+  animation: breathe 3.2s ease-in-out infinite;
 }
 
 /* you stopped frowning! */
-.cheer .sprite > svg {
+.cheer .body {
   animation: hop 0.35s ease-out 4 alternate;
 }
-.cheer .arm {
-  animation: wave 0.2s ease-in-out infinite alternate;
-}
 
-@keyframes step {
-  from { transform: rotate(-24deg); }
-  to { transform: rotate(24deg); }
+@keyframes waddle {
+  0% { transform: rotate(-7deg) translateY(0); }
+  50% { transform: rotate(0deg) translateY(-7px); }
+  100% { transform: rotate(7deg) translateY(0); }
 }
-@keyframes bob {
-  from { transform: translateY(0); }
-  to { transform: translateY(-3px); }
+@keyframes shadow-step {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0.85); }
 }
 @keyframes breathe {
-  0%, 100% { transform: scale(1, 1); }
-  50% { transform: scale(1.03, 0.97); }
-}
-@keyframes wave {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(-40deg); }
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  25% { transform: scale(1.03, 0.97) rotate(-2deg); }
+  50% { transform: scale(1, 1) rotate(0deg); }
+  75% { transform: scale(1.03, 0.97) rotate(2deg); }
 }
 @keyframes hop {
-  from { transform: translateY(0); }
-  to { transform: translateY(-22px); }
+  0% { transform: scale(1.06, 0.92) translateY(0); }
+  100% { transform: scale(0.96, 1.05) translateY(-24px); }
 }
 @keyframes blink {
-  0%, 92%, 100% { transform: scaleY(1); }
-  95% { transform: scaleY(0.1); }
-}
-@keyframes sway {
-  from { transform: rotate(-8deg); }
-  to { transform: rotate(8deg); }
+  0%, 93%, 100% { transform: scaleY(0); }
+  95.5% { transform: scaleY(1); }
 }
 
 /* --- speech bubble -------------------------------------------------------- */

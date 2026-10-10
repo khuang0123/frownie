@@ -71,12 +71,27 @@ webcam ─▶ FaceLandmarker (12 fps) ─▶ rawFrownScore ─▶ FrownTracker �
   you've relaxed for `releaseMs`. The gap between the two thresholds keeps it
   from flickering. If your face leaves the frame, the score decays, so the
   creature wanders off.
-- **`Creature`** is an SVG with CSS animations for walking, waving, breathing,
-  blinking and hopping. It picks a random side of the screen and walks in.
-  If you frown again while it's leaving, it turns around and comes back.
+- **`Creature`** is a hand-drawn sprite (`assets/creature.png`) with CSS
+  animations for waddling, breathing, blinking and hopping. It picks a random
+  side of the screen and walks in. If you frown again while it's leaving, it
+  turns around and comes back.
 - **`main.js`** creates the Electron overlay window and the tray, and serves
   the app from a private `app://` protocol so ES modules and the WASM model
   load as they would from a web server.
+
+## Use your own drawing
+
+Draw the creature facing right on a plain white background, then:
+
+```sh
+pip install pillow numpy
+python3 scripts/make-sprite.py my-drawing.jpg   # writes assets/creature.png
+```
+
+The script removes the background, keeping white highlights inside the drawing.
+If the new drawing has a different shape, update `aspect-ratio` in
+`renderer/style.css`. Then move the two `.eyelid` patches in
+`renderer/creature.js` over the eyes so the blink lines up.
 
 ## Tests
 

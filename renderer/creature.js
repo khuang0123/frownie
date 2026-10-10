@@ -1,7 +1,7 @@
-// The little guy. Owns one DOM element and walks it on and off the bottom
+// The little creature. Owns one DOM element and walks it on and off the bottom
 // of the screen. States: away -> entering -> present -> leaving -> away.
 
-const SIZE = 130; // px, keep in sync with --size in style.css
+const SIZE = 150; // px wide, keep in sync with --size in style.css
 const WALK_SPEED = 170; // px per second
 const MESSAGE_EVERY_MS = 6000;
 
@@ -24,43 +24,24 @@ const pick = (list, avoid) => {
   return options[Math.floor(Math.random() * options.length)];
 };
 
-const SVG = `
-<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
-  <ellipse class="shadow" cx="60" cy="113" rx="34" ry="5" />
-  <g class="legs">
-    <path class="leg leg-back" d="M48 92 v16 a5 5 0 0 0 10 0 v-16" />
-    <path class="leg leg-front" d="M64 92 v16 a5 5 0 0 0 10 0 v-16" />
-  </g>
-  <g class="body">
-    <g class="sprout">
-      <path class="stem" d="M60 30 C 60 22, 62 16, 64 12" />
-      <path class="leaf" d="M64 12 C 70 4, 80 6, 82 10 C 76 16, 68 16, 64 12 Z" />
-      <path class="leaf" d="M63 15 C 56 9, 48 11, 47 15 C 52 20, 59 19, 63 15 Z" />
-    </g>
-    <path class="arm arm-back" d="M24 66 q-12 -4 -14 -16" />
-    <ellipse class="blob" cx="60" cy="64" rx="40" ry="36" />
-    <ellipse class="belly" cx="62" cy="74" rx="24" ry="18" />
-    <path class="arm arm-front" d="M96 66 q12 -4 14 -16" />
-    <g class="eyes">
-      <ellipse class="eye" cx="50" cy="56" rx="8" ry="9.5" />
-      <ellipse class="eye" cx="76" cy="56" rx="8" ry="9.5" />
-      <circle class="pupil" cx="52.5" cy="57" r="4.6" />
-      <circle class="pupil" cx="78.5" cy="57" r="4.6" />
-      <circle class="glint" cx="54.5" cy="54.5" r="1.7" />
-      <circle class="glint" cx="80.5" cy="54.5" r="1.7" />
-    </g>
-    <ellipse class="cheek" cx="41" cy="69" rx="6" ry="3.5" />
-    <ellipse class="cheek" cx="86" cy="69" rx="6" ry="3.5" />
-    <path class="mouth" d="M59 70 q4 4 8 0" />
-  </g>
-</svg>`;
+// Hand-drawn art (faces right). The eyelids are body-coloured patches placed
+// over the eyes so it can blink; positions are % of the image.
+const SPRITE = `
+<div class="shadow"></div>
+<div class="sprite">
+  <div class="body">
+    <img src="/assets/creature.png" alt="" draggable="false" />
+    <span class="eyelid" style="left: 22%; top: 35%; width: 14.5%; height: 14.5%"></span>
+    <span class="eyelid" style="left: 55.6%; top: 29%; width: 14.5%; height: 14.5%"></span>
+  </div>
+</div>`;
 
 export class Creature {
   constructor(parent = document.body) {
     this.el = document.createElement('div');
     this.el.className = 'creature';
     this.el.hidden = true;
-    this.el.innerHTML = `<div class="bubble"></div><div class="sprite">${SVG}</div>`;
+    this.el.innerHTML = `<div class="bubble"></div>${SPRITE}`;
     this.bubble = this.el.querySelector('.bubble');
     parent.appendChild(this.el);
 

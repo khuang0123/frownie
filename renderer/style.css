@@ -1,0 +1,274 @@
+:root {
+  --size: 130px; /* keep in sync with SIZE in creature.js */
+  --fur: #ffb8cf;
+  --fur-dark: #f08fb0;
+  --belly: #ffe3ec;
+  --ink: #3b2a35;
+  --leaf: #7ccf8a;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
+  user-select: none;
+}
+
+/* In a plain browser tab there's no desktop behind us, so fake one. */
+body.web {
+  background: linear-gradient(160deg, #e8eef9, #f7f0f6);
+}
+
+#camera {
+  display: none;
+}
+
+/* --- creature ------------------------------------------------------------ */
+
+.creature {
+  position: fixed;
+  left: 0;
+  bottom: 6px;
+  width: var(--size);
+  height: var(--size);
+  will-change: transform;
+  pointer-events: none;
+}
+
+.sprite {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.15s;
+}
+.facing-left .sprite {
+  transform: scaleX(-1);
+}
+
+.creature svg * {
+  transform-box: fill-box;
+}
+.shadow {
+  fill: rgba(40, 20, 40, 0.18);
+}
+.blob {
+  fill: var(--fur);
+  stroke: var(--fur-dark);
+  stroke-width: 2.5;
+}
+.belly {
+  fill: var(--belly);
+}
+.leg {
+  fill: var(--fur-dark);
+  transform-origin: 50% 0;
+}
+.arm {
+  fill: none;
+  stroke: var(--fur-dark);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.arm-back {
+  transform-origin: 100% 100%;
+}
+.arm-front {
+  transform-origin: 0% 100%;
+}
+.eye {
+  fill: #fff;
+}
+.pupil {
+  fill: var(--ink);
+}
+.glint {
+  fill: #fff;
+}
+.eyes {
+  transform-origin: 50% 50%;
+  animation: blink 4.5s infinite;
+}
+.cheek {
+  fill: #ff7fa6;
+  opacity: 0.55;
+}
+.mouth {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+.stem {
+  fill: none;
+  stroke: var(--leaf);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.leaf {
+  fill: var(--leaf);
+}
+.sprout {
+  transform-origin: 0% 100%;
+  animation: sway 2.6s ease-in-out infinite alternate;
+}
+.body {
+  transform-origin: 50% 100%;
+}
+
+/* walking */
+.walking .leg-front {
+  animation: step 0.36s ease-in-out infinite alternate;
+}
+.walking .leg-back {
+  animation: step 0.36s ease-in-out infinite alternate-reverse;
+}
+.walking .body {
+  animation: bob 0.18s ease-in-out infinite alternate;
+}
+
+/* standing with you */
+.present:not(.cheer) .body {
+  animation: breathe 2.2s ease-in-out infinite;
+}
+.present:not(.cheer) .arm-front {
+  animation: wave 0.5s ease-in-out 4 alternate;
+}
+
+/* you stopped frowning! */
+.cheer .sprite > svg {
+  animation: hop 0.35s ease-out 4 alternate;
+}
+.cheer .arm {
+  animation: wave 0.2s ease-in-out infinite alternate;
+}
+
+@keyframes step {
+  from { transform: rotate(-24deg); }
+  to { transform: rotate(24deg); }
+}
+@keyframes bob {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px); }
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.03, 0.97); }
+}
+@keyframes wave {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-40deg); }
+}
+@keyframes hop {
+  from { transform: translateY(0); }
+  to { transform: translateY(-22px); }
+}
+@keyframes blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+@keyframes sway {
+  from { transform: rotate(-8deg); }
+  to { transform: rotate(8deg); }
+}
+
+/* --- speech bubble -------------------------------------------------------- */
+
+.bubble {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  width: 220px;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.3;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(60, 30, 60, 0.18);
+  opacity: 0;
+  transform: translateX(calc(-50% + var(--nudge, 0px))) scale(0.6);
+  transform-origin: 50% 100%;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: calc(50% - var(--nudge, 0px));
+  margin-left: -8px;
+  border: 8px solid transparent;
+  border-top-color: #fff;
+}
+.bubble.show {
+  opacity: 1;
+  transform: translateX(calc(-50% + var(--nudge, 0px))) scale(1);
+  transition-timing-function: cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+/* --- debug HUD ------------------------------------------------------------ */
+
+#hud {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  width: 220px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(20, 16, 24, 0.82);
+  color: #f3eef5;
+  font: 12px/1.5 ui-monospace, Menlo, monospace;
+  pointer-events: none;
+}
+#hud[hidden] {
+  display: none;
+}
+#hud video {
+  width: 100%;
+  border-radius: 8px;
+  transform: scaleX(-1);
+  margin-bottom: 6px;
+}
+#hud .meter {
+  position: relative;
+  height: 10px;
+  margin: 4px 0;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+#hud .fill {
+  height: 100%;
+  width: 0;
+  background: var(--fur);
+}
+#hud .mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #fff;
+}
+#hud .mark.release {
+  background: #9ad;
+}
+
+#toast {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 70%;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: rgba(20, 16, 24, 0.85);
+  color: #fff;
+  font-size: 13px;
+  pointer-events: none;
+}
+#toast[hidden] {
+  display: none;
+}

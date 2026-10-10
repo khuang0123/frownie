@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src 'self' blob: mediastream:; connect-src 'self' https://storage.googleapis.com; img-src 'self' data: blob:"
+    />
+    <title>frownie</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <video id="camera" playsinline muted></video>
+
+    <div id="hud" hidden>
+      <video id="preview" playsinline muted></video>
+      <div id="hud-state">starting…</div>
+      <div class="meter">
+        <div class="fill" id="hud-fill"></div>
+        <div class="mark" id="hud-threshold"></div>
+        <div class="mark release" id="hud-release"></div>
+      </div>
+      <div id="hud-numbers"></div>
+      <div id="hud-help"></div>
+    </div>
+
+    <div id="toast" hidden></div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

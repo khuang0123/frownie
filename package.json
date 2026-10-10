@@ -1,0 +1,20 @@
+{
+  "name": "frownie",
+  "version": "0.1.0",
+  "description": "A little creature that walks onto your screen whenever you frown.",
+  "main": "main.js",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "node scripts/fetch-model.js",
+    "start": "electron .",
+    "web": "node scripts/serve.js",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^1.1.0"
+  },
+  "devDependencies": {
+    "electron": "^44.7.0"
+  }
+}

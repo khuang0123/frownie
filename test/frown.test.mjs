@@ -30,8 +30,12 @@ function run(tracker, raw, ms, clock) {
   return events;
 }
 
+// The mechanics tests use their own coarse thresholds so they don't depend
+// on the (very sensitive) defaults, which are tested separately below.
+const MECHANICS = { threshold: 0.3, releaseThreshold: 0.15, holdMs: 1000, calibrationMs: 500 };
+
 function calibrated(baseline = 0.05) {
-  const tracker = new FrownTracker({ calibrationMs: 500 });
+  const tracker = new FrownTracker(MECHANICS);
   const clock = { t: 0 };
   run(tracker, baseline, 600, clock);
   assert.equal(tracker.calibrating, false);
@@ -44,7 +48,7 @@ test('calibration learns the resting face', () => {
 });
 
 test('calibration ignores frames with no face', () => {
-  const tracker = new FrownTracker({ calibrationMs: 500 });
+  const tracker = new FrownTracker(MECHANICS);
   const clock = { t: 0 };
   run(tracker, null, 2000, clock);
   assert.equal(tracker.calibrating, true);
@@ -61,12 +65,6 @@ test('a sustained frown starts, and relaxing ends it', () => {
   assert.equal(tracker.frowning, true);
   assert.deepEqual(run(tracker, 0.05, 3000, clock), ['end']);
   assert.equal(tracker.frowning, false);
-});
-
-test('a mild frown is enough', () => {
-  const { tracker, clock } = calibrated();
-  // 0.25 above the resting face: mild, but well past the threshold.
-  assert.deepEqual(run(tracker, 0.3, 2000, clock), ['start']);
 });
 
 test('a brief twitch does not count', () => {
@@ -102,4 +100,52 @@ test('snapshot does not advance state', () => {
   const before = tracker.snapshot();
   tracker.snapshot();
   assert.deepEqual(tracker.snapshot(), before);
+});
+
+// --- defaults: a raw score that shows as 0.01, held for 3 seconds ----------
+
+function defaults() {
+  return { tracker: new FrownTracker(), clock: { t: 0 } };
+}
+
+test('no calibration by default: the raw score is used as is', () => {
+  const { tracker } = defaults();
+  assert.equal(tracker.calibrating, false);
+  assert.equal(tracker.baseline, 0);
+});
+
+test('raw 0.01 held for 3 seconds brings the creature', () => {
+  const { tracker, clock } = defaults();
+  assert.deepEqual(run(tracker, 0.01, 2800, clock), []);
+  assert.deepEqual(run(tracker, 0.01, 600, clock), ['start']);
+});
+
+test('anything that shows as 0.01 counts, even if it wobbles', () => {
+  const { tracker, clock } = defaults();
+  const events = [];
+  for (let i = 0; clock.t < 3500; i++, clock.t += 80) {
+    const { event } = tracker.update(i % 2 ? 0.006 : 0.014, clock.t);
+    if (event) events.push(event);
+  }
+  assert.deepEqual(events, ['start']);
+});
+
+test('a neutral 0.00 face does not bring it', () => {
+  const { tracker, clock } = defaults();
+  assert.deepEqual(run(tracker, 0.002, 10000, clock), []);
+  assert.deepEqual(run(tracker, 0, 10000, clock), []);
+});
+
+test('dropping back to 0.00 before 3 seconds resets the countdown', () => {
+  const { tracker, clock } = defaults();
+  assert.deepEqual(run(tracker, 0.01, 2000, clock), []);
+  assert.deepEqual(run(tracker, 0, 500, clock), []);
+  assert.deepEqual(run(tracker, 0.01, 2000, clock), []);
+});
+
+test('back at 0.00 for 2 seconds, it leaves', () => {
+  const { tracker, clock } = defaults();
+  run(tracker, 0.01, 3500, clock);
+  assert.equal(tracker.frowning, true);
+  assert.deepEqual(run(tracker, 0, 2600, clock), ['end']);
 });

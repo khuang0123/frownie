@@ -132,7 +132,7 @@ const commands = {
   recalibrate: () => {
     tracker.recalibrate();
     creature.dismiss(); // the tracker forgot it was frowning, so no 'end' will come
-    toast('recalibrating — relax your face for a few seconds', 3000);
+    if (tracker.calibrating) toast('recalibrating — relax your face for a few seconds', 3000);
   },
   pause: () => setPaused(true),
   resume: () => setPaused(false),

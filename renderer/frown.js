@@ -3,12 +3,16 @@
 // No DOM in here so it can be unit tested under plain Node.
 
 export const DEFAULT_OPTIONS = {
-  threshold: 0.2, // smoothed score (above your neutral face) that counts as a frown
-  releaseThreshold: 0.1, // score you have to drop below for the frown to be "over"
-  holdMs: 1000, // how long a frown must last before the creature comes
+  // Smoothed score that counts as a frown. 0.005 is anything the debug panel
+  // rounds to 0.01 or more, so even a very faint frown counts.
+  threshold: 0.005,
+  releaseThreshold: 0.003, // score you have to drop below for the frown to be "over"
+  holdMs: 3000, // how long a frown must last before the creature comes
   releaseMs: 2000, // how long you must stop frowning before it leaves
   smoothing: 0.35, // EMA factor per frame; higher = snappier, noisier
-  calibrationMs: 2500, // how long to watch your resting face at startup
+  // How long to watch your resting face at startup and measure frowns
+  // relative to it. 0 = off: thresholds apply to the raw score directly.
+  calibrationMs: 0,
   maxBaseline: 0.3, // cap so calibrating mid-frown doesn't make you un-detectable
 };
 
@@ -49,10 +53,10 @@ export class FrownTracker {
     this.recalibrate();
   }
 
-  /** Forget the resting-face baseline and learn it again. */
+  /** Reset, and re-learn the resting face if calibration is on. */
   recalibrate() {
     this.baseline = 0;
-    this.calibration = { start: null, samples: [] };
+    this.calibration = this.opts.calibrationMs > 0 ? { start: null, samples: [] } : null;
     this.score = 0;
     this.frowning = false;
     this.pendingSince = null;

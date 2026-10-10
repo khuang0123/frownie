@@ -3,8 +3,8 @@
 // No DOM in here so it can be unit tested under plain Node.
 
 export const DEFAULT_OPTIONS = {
-  threshold: 0.3, // smoothed score (above your neutral face) that counts as a frown
-  releaseThreshold: 0.15, // score you have to drop below for the frown to be "over"
+  threshold: 0.2, // smoothed score (above your neutral face) that counts as a frown
+  releaseThreshold: 0.1, // score you have to drop below for the frown to be "over"
   holdMs: 1000, // how long a frown must last before the creature comes
   releaseMs: 2000, // how long you must stop frowning before it leaves
   smoothing: 0.35, // EMA factor per frame; higher = snappier, noisier

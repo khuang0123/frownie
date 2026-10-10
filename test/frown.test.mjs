@@ -63,6 +63,12 @@ test('a sustained frown starts, and relaxing ends it', () => {
   assert.equal(tracker.frowning, false);
 });
 
+test('a mild frown is enough', () => {
+  const { tracker, clock } = calibrated();
+  // 0.25 above the resting face: mild, but well past the threshold.
+  assert.deepEqual(run(tracker, 0.3, 2000, clock), ['start']);
+});
+
 test('a brief twitch does not count', () => {
   const { tracker, clock } = calibrated();
   assert.deepEqual(run(tracker, 0.8, 500, clock), []);
@@ -85,8 +91,8 @@ test('walking away from the camera eventually ends the frown', () => {
 
 test('frowning is measured relative to the baseline', () => {
   const { tracker, clock } = calibrated(0.25);
-  // 0.45 raw is only 0.2 above this person's resting face: below threshold.
-  assert.deepEqual(run(tracker, 0.45, 3000, clock), []);
+  // 0.4 raw is only 0.15 above this person's resting face: below threshold.
+  assert.deepEqual(run(tracker, 0.4, 3000, clock), []);
   assert.deepEqual(run(tracker, 0.7, 2000, clock), ['start']);
 });
 

@@ -45,13 +45,13 @@ Add `?debug` to the URL to open with the debug panel showing.
 ## Tuning
 
 If it's too eager or too shy, open the debug panel, watch the score bar while
-you frown, and adjust. Any of these can be passed as a flag (`npm start -- --threshold=0.2`)
-or as a URL parameter in the browser (`?threshold=0.2`):
+you frown, and adjust. Any of these can be passed as a flag (`npm start -- --threshold=0.15`)
+or as a URL parameter in the browser (`?threshold=0.15`):
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `threshold` | `0.3` | Score above your resting face that counts as a frown (white mark on the bar) |
-| `releaseThreshold` | `0.15` | Score you have to drop below for the frown to be over (blue mark) |
+| `threshold` | `0.2` | Score above your resting face that counts as a frown (white mark on the bar) |
+| `releaseThreshold` | `0.1` | Score you have to drop below for the frown to be over (blue mark) |
 | `holdMs` | `1000` | How long a frown has to last before the creature comes |
 | `releaseMs` | `2000` | How long you have to stop frowning before it leaves |
 | `smoothing` | `0.35` | How fast the score follows your face (higher = twitchier) |
